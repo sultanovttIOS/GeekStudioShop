@@ -11,7 +11,8 @@ import SwiftUI
 struct GeeksStudioApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ProductsView(viewModel: ProductViewModel())
+            
         }
     }
 }
