@@ -11,49 +11,83 @@ let screen = UIScreen.main.bounds
 
 struct ProductsView: View {
     
-    @StateObject var viewModel: ProductViewModel
+    @StateObject private var viewModel = ViewModel()
     let layoutForLeft = [GridItem(.adaptive(minimum: screen.width / 2.4))]
     @State private var showingBottomSheet = false
     @State private var selectedProduct: Product?
+    @State private var isCategoryMenu = false
+    @State private var selectedCategory: String?
     
     var body: some View {
         NavigationStack {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: layoutForLeft, spacing: 16) {
-                    ForEach(viewModel.products, id: \.id) { item in
-                        ProductCell(product: item) {
-                            selectedProduct = item
-                            showingBottomSheet.toggle()
+            ZStack {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVGrid(columns: layoutForLeft, spacing: 16) {
+                        ForEach(viewModel.products, id: \.id) { item in
+                            ProductCell(product: item) {
+                                selectedProduct = item
+                                showingBottomSheet.toggle()
+                            }
+//                            .onAppear {
+//                                if item.id == viewModel.products.last?.id {
+//                                    Task {
+//                                        try await viewModel.fetchProducts()
+//                                    }
+//                                }
+//                            }
+                        }
+                        .frame(maxHeight: 300)
+                    }
+                    .padding(.horizontal)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color("myGrayLight"))
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            viewModel.isShowCart.toggle()
+                        }) {
+                            Image("cart")
                         }
                     }
-                    .frame(maxHeight: 300)
-                }
-                .padding(.horizontal)
-            }
-            .navigationTitle("Products")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color("myGrayLight"))
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        print("Right button tapped")
-                    }) {
-                        Image("cart")
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            
+                            isCategoryMenu.toggle()
+                        }) {
+                            Image(.category)
+                        }
                     }
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        print("Left button tapped")
-                    }) {
-                        Image("category")
+                .navigationTitle("Products")
+                .sheet(isPresented: $showingBottomSheet) {
+                    if let selectedProduct = selectedProduct {
+                        DetailView(viewModel: viewModel, product: selectedProduct)
+                            .presentationDetents([.large, .large])
                     }
                 }
-            }
-            .sheet(isPresented: $showingBottomSheet) {
-                if let selectedProduct = selectedProduct {
-                    let viewModel = DetailViewModel(product: selectedProduct)
-                    DetailView(viewModel: viewModel)
-                        .presentationDetents([.large, .large])
+                .navigationDestination(isPresented: $viewModel.isShowCart,
+                                       destination: {
+                    CartView(viewModel: viewModel)
+                })
+                .onAppear() {
+                    Task {
+                        try await viewModel.fetchProducts()
+                    }
+                    Task {
+                        try await viewModel.fetchCategories()
+                    }
+                }
+            
+                if isCategoryMenu {
+                    CategoryMenu(viewModel: viewModel) { category in
+                        selectedCategory = category
+                        Task {
+                            try await viewModel.fetchProducts()
+                        }
+                        isCategoryMenu = false
+                    }
+                    .zIndex(1)
                 }
             }
         }
@@ -61,5 +95,13 @@ struct ProductsView: View {
 }
 
 #Preview {
-    ProductsView(viewModel: ProductViewModel())
+    ProductsView()
+}
+
+struct CategoryButtonPositionPreferenceKey: PreferenceKey {
+    static var defaultValue: CGPoint = .zero
+    
+    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+        value = nextValue()
+    }
 }

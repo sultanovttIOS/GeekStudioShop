@@ -7,12 +7,18 @@
 
 import Foundation
 
-struct Product {
+struct Product: Decodable {
     let id: Int
     let title: String
-    let image: String
-    let price: Int
-    let category: String
+    let price: Float
     let description: String
+    let category: String
+    let image: String
+    let rating: Rating
     
+}
+
+struct Rating: Decodable {
+    let rate: Double
+    let count: Int
 }
