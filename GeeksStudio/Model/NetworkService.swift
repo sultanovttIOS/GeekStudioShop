@@ -21,18 +21,12 @@ final class NetworkService {
     
     private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
     
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        encoder.dateEncodingStrategy = .formatted(dateFormatter)
         encoder.keyEncodingStrategy = .convertToSnakeCase
         return encoder
     }()
@@ -66,7 +60,7 @@ final class NetworkService {
             AF.request(url, method: .get, headers: headers)
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: [Product].self, decoder: decoder) { response in
-
+                    debugPrint(response)
                     switch response.result {
                     case .success(let products):
                         continuation.resume(returning: products)

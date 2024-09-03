@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct DetailView: View {
+struct DetailsView: View {
     @State private var isAddToCart = true
     @ObservedObject var viewModel: ViewModel
-    let product: Product
+    var product: Product
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
@@ -44,13 +44,14 @@ struct DetailView: View {
                                 .font(.system(size: 16, weight: .regular))
                                 .frame(maxHeight: 30)
                                 .foregroundColor(Color("myGrayMiddle"))
-                            HStack {
-                                Image("starFill")
-                                Image("starFill")
-                                Image("starHalf")
-                                Image("star")
-                                Image("star")
-                            }
+                            RatingView(rating: product.rating.rate)
+//                            HStack {
+//                                Image("starFill")
+//                                Image("starFill")
+//                                Image("starHalf")
+//                                Image("star")
+//                                Image("star")
+//                            }
                         }
                         HStack(alignment: .bottom) {
                             Text("Price")

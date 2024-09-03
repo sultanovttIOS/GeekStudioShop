@@ -14,7 +14,7 @@ struct ProductsView: View {
     @StateObject private var viewModel = ViewModel()
     let layoutForLeft = [GridItem(.adaptive(minimum: screen.width / 2.4))]
     @State private var showingBottomSheet = false
-    @State private var selectedProduct: Product?
+    @State var selectedProduct: Product?
     @State private var isCategoryMenu = false
     @State private var selectedCategory: String?
     
@@ -23,10 +23,14 @@ struct ProductsView: View {
             ZStack {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVGrid(columns: layoutForLeft, spacing: 16) {
-                        ForEach(viewModel.products, id: \.id) { item in
-                            ProductCell(product: item) {
-                                selectedProduct = item
-                                showingBottomSheet.toggle()
+                        ForEach(viewModel.products, id: \.id) { product in
+                            ProductCell(product: product) {
+                                if isCategoryMenu {
+                                    isCategoryMenu = false
+                                } else {
+                                    self.selectedProduct = product
+                                    showingBottomSheet.toggle()
+                                }
                             }
                         }
                         .frame(maxHeight: 300)
@@ -35,7 +39,18 @@ struct ProductsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("myGrayLight"))
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        VStack {
+                            Text("Products")
+                                .font(.headline)
+                                .foregroundColor(.myBlack)
+                            Text(selectedCategory ?? "All")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
                             viewModel.isShowCart.toggle()
@@ -52,13 +67,10 @@ struct ProductsView: View {
                         }
                     }
                 }
-                .navigationTitle("Products")
-                .sheet(isPresented: $showingBottomSheet) {
-                    if let selectedProduct = selectedProduct {
-                        DetailView(viewModel: viewModel, product: selectedProduct)
-                            .presentationDetents([.large, .large])
-                    }
+                .sheet(item: $selectedProduct) { selectedProduct in
+                    DetailsView(viewModel: viewModel, product: selectedProduct)
                 }
+                
                 .navigationDestination(isPresented: $viewModel.isShowCart,
                                        destination: {
                     CartView(viewModel: viewModel)
@@ -66,8 +78,6 @@ struct ProductsView: View {
                 .onAppear() {
                     Task {
                         try await viewModel.fetchProducts()
-                    }
-                    Task {
                         try await viewModel.fetchCategories()
                     }
                 }
@@ -82,19 +92,9 @@ struct ProductsView: View {
                     }
                     .zIndex(1)
                 }
+                
             }
         }
     }
 }
 
-#Preview {
-    ProductsView()
-}
-
-struct CategoryButtonPositionPreferenceKey: PreferenceKey {
-    static var defaultValue: CGPoint = .zero
-    
-    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
-        value = nextValue()
-    }
-}
