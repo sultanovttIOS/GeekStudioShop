@@ -14,7 +14,7 @@ struct Product: Decodable, Identifiable {
     let description: String
     let category: String
     let image: String
-    let rating: Rating
+//    let rating: Rating
     
 }
 

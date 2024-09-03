@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 let screen = UIScreen.main.bounds
 
@@ -17,7 +18,8 @@ struct ProductsView: View {
     @State var selectedProduct: Product?
     @State private var isCategoryMenu = false
     @State private var selectedCategory: String?
-    
+
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -36,6 +38,9 @@ struct ProductsView: View {
                         .frame(maxHeight: 300)
                     }
                     .padding(.horizontal)
+                }
+                .onAppear {
+                    viewModel.fetchProductsFromCoreData()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("myGrayLight"))
@@ -76,8 +81,9 @@ struct ProductsView: View {
                     CartView(viewModel: viewModel)
                 })
                 .onAppear() {
+                    viewModel.fetchProductsFromCoreData()
                     Task {
-                        try await viewModel.fetchProducts()
+//                        try await viewModel.fetchProducts()
                         try await viewModel.fetchCategories()
                     }
                 }
@@ -87,6 +93,7 @@ struct ProductsView: View {
                         selectedCategory = category
                         Task {
                             try await viewModel.fetchProducts()
+                            
                         }
                         isCategoryMenu = false
                     }

@@ -44,7 +44,7 @@ struct DetailsView: View {
                                 .font(.system(size: 16, weight: .regular))
                                 .frame(maxHeight: 30)
                                 .foregroundColor(Color("myGrayMiddle"))
-                            RatingView(rating: product.rating.rate)
+//                            RatingView(rating: product.rating.rate)
 //                            HStack {
 //                                Image("starFill")
 //                                Image("starFill")

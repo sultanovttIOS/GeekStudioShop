@@ -9,10 +9,13 @@ import SwiftUI
 
 @main
 struct GeeksStudioApp: App {
+    let persistenceController = PersistenceController.shared
+
     var body: some Scene {
         WindowGroup {
-            ProductsView()
-            
+            SplashScreenView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+
         }
     }
 }
