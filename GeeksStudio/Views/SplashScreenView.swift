@@ -19,7 +19,7 @@ struct SplashScreenView: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(2)
-                        .padding()             
+                        .padding()
                 }
                 .onAppear {
                     Task {

@@ -8,9 +8,5 @@
 import Foundation
 
 struct Category: Decodable {
-    let name: String
-
-    enum CodingKeys: String, CodingKey {
-        case name = "category"
-    }
+    let title: String
 }

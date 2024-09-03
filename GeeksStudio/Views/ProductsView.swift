@@ -82,19 +82,13 @@ struct ProductsView: View {
                 })
                 .onAppear() {
                     viewModel.fetchProductsFromCoreData()
-                    Task {
-//                        try await viewModel.fetchProducts()
-                        try await viewModel.fetchCategories()
-                    }
+                    viewModel.fetchCategoriesFromCoreData()
                 }
             
                 if isCategoryMenu {
                     CategoryMenu(viewModel: viewModel) { category in
                         selectedCategory = category
-                        Task {
-                            try await viewModel.fetchProducts()
-                            
-                        }
+                        
                         isCategoryMenu = false
                     }
                     .zIndex(1)

@@ -14,21 +14,26 @@ import CoreData
 class ViewModel: ObservableObject {
     
     @Published var products: [Product] = []
-    @Published var categories: [String] = []
+    @Published var categories: [String] = ["All"]
     @Published var productsInCart: [Product] = []
     @Published var isShowCart = false
-    @Published var selectedCategory: String = "All"
+    @Published var selectedCategory: String = "All" {
+        didSet {
+            filterProductsByCategory()
+        }
+    }
     private let networkService = NetworkService.shared
     private let viewContext = PersistenceController.shared.container.viewContext
     
     init() {
         fetchProductsFromCoreData()
         fetchCartProductsFromCoreData()
+        fetchCategoriesFromCoreData()
     }
     
     // MARK: - Fetch Products from Network
     func fetchProducts() async throws {
-        let limit = 20
+        let limit = 30
         let category = selectedCategory == "All" ? nil : selectedCategory
         do {
             let products = try await networkService.getAllProducts(
@@ -50,7 +55,8 @@ class ViewModel: ObservableObject {
             do {
                 let categories = try await networkService.getCategories()
                 DispatchQueue.main.async {
-                    self.categories = ["All"] + categories
+                    self.categories = categories
+                    self.saveCategoriesToCoreData(categories)
                 }
             } catch {
                 print(error.localizedDescription)
@@ -114,11 +120,11 @@ class ViewModel: ObservableObject {
             self.products = savedProducts.map { cdProduct in
                 Product(
                     id: Int(cdProduct.id),
-                    title: cdProduct.title ?? "",
+                    title: cdProduct.title,
                     price: cdProduct.price,
-                    description: cdProduct.desc ?? "",
-                    category: cdProduct.category ?? "",
-                    image: cdProduct.image ?? ""
+                    description: cdProduct.desc,
+                    category: cdProduct.category,
+                    image: cdProduct.image
                 )
             }
         } catch {
@@ -156,11 +162,11 @@ class ViewModel: ObservableObject {
             self.productsInCart = savedCartProducts.map { cdProduct in
                 Product(
                     id: Int(cdProduct.id),
-                    title: cdProduct.title ?? "",
+                    title: cdProduct.title,
                     price: cdProduct.price,
-                    description: cdProduct.desc ?? "",
-                    category: cdProduct.category ?? "",
-                    image: cdProduct.image ?? ""
+                    description: cdProduct.desc,
+                    category: cdProduct.category,
+                    image: cdProduct.image
                 )
             }
         } catch {
@@ -198,4 +204,81 @@ class ViewModel: ObservableObject {
             print("Failed to remove cart product: \(error.localizedDescription)")
         }
     }
+    
+    //MARK: Categories
+    
+    // MARK: - Фильтрация продуктов по категории
+    private func filterProductsByCategory() {
+        if selectedCategory == "All" {
+            self.products = fetchAllProductsFromCoreData()
+        } else {
+            self.products = fetchProductsByCategoryFromCoreData(selectedCategory)
+        }
+    }
+    
+    private func saveCategoriesToCoreData(_ categories: [String]) {
+        let fetchRequest: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
+        categories.forEach { categoryName in
+            let category = CategoryEntity(context: viewContext)
+            category.title = categoryName
+        }
+        do {
+            try viewContext.save()
+            print("Saved categories\(categories)")
+        } catch {
+            print("Failed to save categories: \(error.localizedDescription)")
+        }
+    }
+
+    func fetchCategoriesFromCoreData() {
+        let fetchRequest: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
+        do {
+            let savedCategories = try viewContext.fetch(fetchRequest)
+            self.categories = savedCategories.map { $0.title ?? "" }
+        } catch {
+            print("Failed to fetch categories from Core Data: \(error.localizedDescription)")
+        }
+    }
+    
+    private func fetchProductsByCategoryFromCoreData(_ category: String) -> [Product] {
+        let request: NSFetchRequest<ProductEntity> = ProductEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "category == %@", category)
+        do {
+            let savedProducts = try viewContext.fetch(request)
+            return savedProducts.map { cdProduct in
+                Product(
+                    id: Int(cdProduct.id),
+                    title: cdProduct.title,
+                    price: cdProduct.price,
+                    description: cdProduct.desc,
+                    category: cdProduct.category,
+                    image: cdProduct.image
+                )
+            }
+        } catch {
+            print("Failed to fetch products from Core Data: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    private func fetchAllProductsFromCoreData() -> [Product] {
+        let request: NSFetchRequest<ProductEntity> = ProductEntity.fetchRequest()
+        do {
+            let savedProducts = try viewContext.fetch(request)
+            return savedProducts.map { cdProduct in
+                Product(
+                    id: Int(cdProduct.id),
+                    title: cdProduct.title,
+                    price: cdProduct.price,
+                    description: cdProduct.desc,
+                    category: cdProduct.category,
+                    image: cdProduct.image
+                )
+            }
+        } catch {
+            print("Failed to fetch products from Core Data: \(error.localizedDescription)")
+            return []
+        }
+    }
+
 }
