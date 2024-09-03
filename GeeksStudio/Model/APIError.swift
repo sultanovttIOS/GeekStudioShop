@@ -9,7 +9,4 @@ import Foundation
 
 enum APIError: Error {
     case invalidServerURL
-    case notHTTPResponse
-    case unexpectedStatusCode
-    case decodingError
 }

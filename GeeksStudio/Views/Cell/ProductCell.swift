@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProductCell: View {
-    var product: Product
+    let product: Product
     var onTap: () -> Void
     
     var body: some View {
@@ -44,11 +44,10 @@ struct ProductCell: View {
         formatter.minimumFractionDigits = 2
         formatter.positiveFormat = "#,##0.00" 
         
-        let formattedPrice = formatter.string(from: NSNumber(value: price)) ?? "\(price)"
+        let formattedPrice = formatter.string(
+            from: NSNumber(
+                value: price)) ?? "\(price)"
         return "\(formattedPrice) $"
     }
 }
 
-//#Preview {
-//    ProductCell(product: Product(id: 1, title: "Banan", image: "bgFon", price: 1000, category: "wwd", description: "sd"), onTap: <#() -> Void#>)
-//}

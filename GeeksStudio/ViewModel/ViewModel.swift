@@ -26,7 +26,7 @@ class ViewModel: ObservableObject {
     }
     
     //MARK: Get All products
-
+    
     func fetchProducts() async throws {
         let limit = 10
         let category = selectedCategory == "All" ? nil : selectedCategory
@@ -54,5 +54,13 @@ class ViewModel: ObservableObject {
                 print(error.localizedDescription)
             }
         }
+    }
+    
+    func clearCart() {
+        productsInCart.removeAll()
+    }
+    
+    func removeFromCart(product: Product) {
+        productsInCart.removeAll { $0.id == product.id }
     }
 }

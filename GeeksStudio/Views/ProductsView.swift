@@ -28,13 +28,6 @@ struct ProductsView: View {
                                 selectedProduct = item
                                 showingBottomSheet.toggle()
                             }
-//                            .onAppear {
-//                                if item.id == viewModel.products.last?.id {
-//                                    Task {
-//                                        try await viewModel.fetchProducts()
-//                                    }
-//                                }
-//                            }
                         }
                         .frame(maxHeight: 300)
                     }

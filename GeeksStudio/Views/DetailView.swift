@@ -79,7 +79,7 @@ struct DetailView: View {
                 Spacer()
                 
                 ZStack {
-                    Button {
+                    Button(action: {
                         if isAddToCart {
                             viewModel.addToCart(product: product)
                             isAddToCart.toggle()
@@ -88,20 +88,31 @@ struct DetailView: View {
                             isAddToCart.toggle()
                             presentationMode.wrappedValue.dismiss()
                         }
-                    } label: {
-                        Text(isAddToCart ? "ADD TO CART" : "GO TO CART")
-                        
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(
-                                isAddToCart ? Color(.myBlack) : Color(.myWhite))
-                            .frame(maxWidth: .infinity, maxHeight: 60)
-                            .cornerRadius(36)
-                            .background(
-                                isAddToCart ? Color(.myWhite) : Color(.myBlack))
-                            .border(Color("myBlack"))
-                            .padding(.horizontal)
-                            .padding(.bottom)
+                    }) {
+                        HStack {
+                            Text(isAddToCart ? "ADD TO CART" : "GO TO CART")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(
+                                    isAddToCart ? Color(.myBlack) : Color(.myWhite))
+                                .padding(.leading, 32)
+                            Spacer()
+                            Image(isAddToCart ? "cartPlus" : "cartGo")
+                                .renderingMode(.template)
+                                .foregroundColor(
+                                    isAddToCart ? Color(.myBlack) : Color(.myWhite))
+                                .padding(.trailing, 32)
+                                .frame(maxWidth: 24, maxHeight: 24)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: 60)
+                        .background(isAddToCart ? Color(.myWhite) : Color(.myBlack))
+                        .clipShape(RoundedRectangle(cornerRadius: 36))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 36)
+                                .stroke(Color("myBlack"), lineWidth: 1)
+                                .shadow(radius: 4)
+                        )
                     }
+                    .padding(.horizontal)
                 }
             }
         }
@@ -109,7 +120,7 @@ struct DetailView: View {
     
     // MARK: formatPrice
     
-    func formatPrice(_ price: Float) -> String {
+    private func formatPrice(_ price: Float) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal 
         formatter.maximumFractionDigits = 2
@@ -120,13 +131,3 @@ struct DetailView: View {
         return "\(formattedPrice) $"
     }
 }
-
-//#Preview {
-//    DetailView(viewModel: ViewModel(), product: Product(
-//        id: 7,
-//        title: "Banan",
-//        image: "bgFon",
-//        price: 1000,
-//        category: "Mens slim fit",
-//        description: "The color could be slightly different between on the screen and in practice. / Please note that body builds vary by person, therefore, detailed size information should be reviewed below on the product description."))
-//}

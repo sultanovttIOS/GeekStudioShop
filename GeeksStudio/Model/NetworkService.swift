@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import SwiftUI
+import os
 
 final class NetworkService {
     static let shared = NetworkService()
@@ -36,12 +37,15 @@ final class NetworkService {
         return encoder
     }()
     
+    let logger = Logger(subsystem: "com.GeeksStudio", category: "Products")
     
     private let baseURL = "https://fakestoreapi.com/"
-    private let imageCache = NSCache<NSString, UIImage>()
+
+    // MARK: Get All Products
     
     func getAllProducts(category: String?, limit: Int) async throws -> [Product] {
         guard var url = URL(string: baseURL) else {
+            logger.error("Invalid server URL: \(self.baseURL)")
             throw APIError.invalidServerURL
         }
         
@@ -62,9 +66,7 @@ final class NetworkService {
             AF.request(url, method: .get, headers: headers)
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: [Product].self, decoder: decoder) { response in
-                    print("******************")
 
-                    print(url)
                     switch response.result {
                     case .success(let products):
                         continuation.resume(returning: products)
@@ -91,8 +93,11 @@ final class NetworkService {
         }
     }
 
+    // MARK: Get Categories
+
     func getCategories() async throws -> [String] {
         guard var url = URL(string: baseURL) else {
+            logger.error("Invalid server URL: \(self.baseURL)")
             throw APIError.invalidServerURL
         }
         
@@ -131,25 +136,5 @@ final class NetworkService {
             print("Server Error: \(serverMessage)")
         }
         continuation.resume(throwing: error)
-    }
-    
-    func getImage(from url: URL) async -> Image? {
-        let cacheKey = url.absoluteString as NSString
-        
-        if let cachedImage = imageCache.object(forKey: cacheKey) {
-            return Image(uiImage: cachedImage)
-        }
-        
-        do {
-            let (data, _) = try await session.data(from: url)
-            if let image = UIImage(data: data) {
-                imageCache.setObject(image, forKey: cacheKey)
-                return Image(uiImage: image)
-            }
-        } catch {
-            print("Error loading image: \(error)")
-        }
-        
-        return nil
     }
 }

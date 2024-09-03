@@ -8,33 +8,80 @@
 import SwiftUI
 
 struct CartView: View {
-    @State var viewModel: ViewModel
+    @ObservedObject var viewModel: ViewModel
     let layoutForCart = [GridItem(.adaptive(minimum: screen.width / 1.4))]
-
+    @State var cartIsEmpty = false
+    @Environment(\.dismiss) var dismiss
+    @State var buyIsActive = false
+    
     var body: some View {
-        
         VStack {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVGrid(columns: layoutForCart, spacing: 16) {
-                    ForEach(viewModel.productsInCart, id: \.id) { item in
-                        ProductInCartCell(product: item)
+            if viewModel.productsInCart.isEmpty {
+                Spacer()
+                Text("Empty")
+                    .font(.system(size: 24, weight: .regular))
+                    .foregroundStyle(.myGrayMiddle)
+                    .onAppear {
+                        cartIsEmpty = true
                     }
-                    .frame(maxHeight: 300)
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVGrid(columns: layoutForCart, spacing: 16) {
+                        ForEach(viewModel.productsInCart, id: \.id) { item in
+                            ProductInCartCell(product: item, viewModel: viewModel)
+                            
+                        }
+                        .frame(maxHeight: 300)
+                    }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
+                .onAppear {
+                    cartIsEmpty = false
+                }
             }
             Spacer()
-            Button {
-                
-            } label: {
-                Text("BUY")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(Color("myBlack"))
-                    .frame(maxWidth: .infinity, maxHeight: 60)
-                    .cornerRadius(36)
-                    .border(Color("myBlack"))
+            Button(action: {
+                if cartIsEmpty {
+                    dismiss()
+                } else {
+                    buyIsActive = true
+                }
+            }) {
+                HStack {
+                    Text(cartIsEmpty ? "ADD SOMETHING" : "BUY")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(
+                            cartIsEmpty ? Color("myBlack") : Color("myWhite"))
+                        .padding(.leading, 32)
+                    Spacer()
+                    Image(.bag)
+                        .renderingMode(.template)
+                        .foregroundColor(
+                            cartIsEmpty ? Color("myBlack") : Color("myWhite"))
+                        .padding(.trailing, 32)
+                        .frame(maxWidth: 24, maxHeight: 24)
+                }
+                .frame(maxWidth: .infinity, maxHeight: 60)
+                .background(cartIsEmpty ? .myWhite : .myBlack)
+                .clipShape(RoundedRectangle(cornerRadius: 36))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 36)
+                        .stroke(Color("myBlack"), lineWidth: 1)
+                        .shadow(radius: 4)
+                )
             }
             .padding(.horizontal)
+            .alert(isPresented: $buyIsActive) {
+                Alert(
+                    title: Text("Your Cart"),
+                    message: Text(
+                        viewModel.productsInCart.map { $0.title }.joined(separator: ", ")),
+                    dismissButton: .default(Text("OK")) {
+                        viewModel.clearCart()
+                    }
+                )
+            }
+            .navigationTitle("Cart")
         }
     }
 }
