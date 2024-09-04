@@ -158,7 +158,6 @@
 				CE8D5E102C8598B800ED2B9B /* CategoryMenu.swift */,
 				CE8D5E052C831FB800ED2B9B /* CartView.swift */,
 				CE8D5DFE2C81D25D00ED2B9B /* Cell */,
-				CE8229992C86F60400CD88DC /* RatingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,6 +173,7 @@
 		CE8D5DFE2C81D25D00ED2B9B /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				CE8229992C86F60400CD88DC /* RatingView.swift */,
 				CE8D5DFC2C81D25600ED2B9B /* ProductCell.swift */,
 				CE8D5E092C856D4300ED2B9B /* ProductInCartCell.swift */,
 			);

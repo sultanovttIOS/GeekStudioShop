@@ -10,6 +10,7 @@
         <relationship name="rating" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RatingEntity"/>
     </entity>
     <entity name="CategoryEntity" representedClassName="CategoryEntity" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ProductEntity" representedClassName="ProductEntity" syncable="YES">

@@ -7,6 +7,7 @@
 
 import Foundation
 
-struct Category: Decodable {
+struct Category: Decodable, Identifiable {
+    let id: UUID
     let title: String
 }

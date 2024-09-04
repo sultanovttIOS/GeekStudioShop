@@ -14,7 +14,7 @@ import CoreData
 class ViewModel: ObservableObject {
     
     @Published var products: [Product] = []
-    @Published var categories: [String] = ["All"]
+    @Published var categories: [String] = []
     @Published var productsInCart: [Product] = []
     @Published var isShowCart = false
     @Published var selectedCategory: String = "All" {
@@ -54,9 +54,15 @@ class ViewModel: ObservableObject {
         Task {
             do {
                 let categories = try await networkService.getCategories()
+                var uniqueCategories = Array(Set(categories)).sorted()
+                
+                if !uniqueCategories.contains("All") {
+                    uniqueCategories.insert("All", at: 0)
+                }
                 DispatchQueue.main.async {
                     self.categories = categories
                     self.saveCategoriesToCoreData(categories)
+                    print(categories)
                 }
             } catch {
                 print(error.localizedDescription)
@@ -87,7 +93,6 @@ class ViewModel: ObservableObject {
     
     private func saveProductsToCoreData(_ products: [Product]) {
         products.forEach { product in
-            // Check if the product already exists
             let fetchRequest: NSFetchRequest<ProductEntity> = ProductEntity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %d", product.id)
             
@@ -239,24 +244,40 @@ class ViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Save Categories to Core Data
     private func saveCategoriesToCoreData(_ categories: [String]) {
-        let _: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
-        categories.forEach { categoryName in
-            let category = CategoryEntity(context: viewContext)
-            category.title = categoryName
-        }
+        let fetchRequest: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
+        
         do {
+            let existingCategories = try viewContext.fetch(fetchRequest).compactMap { $0.title }
+            let existingSet = Set(existingCategories)
+            
+            categories.forEach { categoryName in
+                guard !existingSet.contains(categoryName) && categoryName != "All" else { return }
+                
+                let category = CategoryEntity(context: viewContext)
+                category.title = categoryName
+            }
+            
             try viewContext.save()
-            print("Saved categories\(categories)")
+            print("Saved categories: \(categories)")
         } catch {
             print("Failed to save categories: \(error.localizedDescription)")
         }
     }
+    
+    // MARK: - Fetch Categories from Core Data
+    
     func fetchCategoriesFromCoreData() {
         let fetchRequest: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
         do {
-            let savedCategories = try viewContext.fetch(fetchRequest)
-            self.categories = savedCategories.map { $0.title ?? "" }
+            var savedCategories = Array(Set(try viewContext.fetch(fetchRequest).compactMap { $0.title }))
+            
+            if !savedCategories.contains("All") {
+                savedCategories.insert("All", at: 0)
+            }
+            
+            self.categories = savedCategories.sorted()
         } catch {
             print("Failed to fetch categories from Core Data: \(error.localizedDescription)")
         }
