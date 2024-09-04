@@ -18,8 +18,8 @@ struct ProductsView: View {
     @State var selectedProduct: Product?
     @State private var isCategoryMenu = false
     @State private var selectedCategory: String?
-
-
+    
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -84,7 +84,7 @@ struct ProductsView: View {
                     viewModel.fetchProductsFromCoreData()
                     viewModel.fetchCategoriesFromCoreData()
                 }
-            
+                
                 if isCategoryMenu {
                     CategoryMenu(viewModel: viewModel) { category in
                         selectedCategory = category
@@ -93,7 +93,6 @@ struct ProductsView: View {
                     }
                     .zIndex(1)
                 }
-                
             }
         }
     }

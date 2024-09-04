@@ -69,6 +69,8 @@ struct CartView: View {
                         .stroke(Color("myBlack"), lineWidth: 1)
                         .shadow(radius: 4)
                 )
+                .padding(.bottom)
+
             }
             .padding(.horizontal)
             .alert(isPresented: $buyIsActive) {

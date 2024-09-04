@@ -60,7 +60,7 @@ final class NetworkService {
             AF.request(url, method: .get, headers: headers)
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: [Product].self, decoder: decoder) { response in
-//                    debugPrint(response)
+                    debugPrint(response)
                     switch response.result {
                     case .success(let products):
                         continuation.resume(returning: products)
