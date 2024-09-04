@@ -10,17 +10,23 @@ import SwiftUI
 struct RatingView: View {
     let rating: Float
     let maxRating: Int = 5
-    
+
     var body: some View {
         HStack(spacing: 2) {
             ForEach(0..<maxRating, id: \.self) { index in
-                Image(rating > Float(index) ? "starFill" : "star")
-                    .font(.system(size: 16))
+                if index < Int(rating) {
+                    Image("starFill")
+                        .font(.system(size: 16))
+                } else if index == Int(
+                    rating) && rating.truncatingRemainder(
+                        dividingBy: 1) >= 0.5 {
+                    Image("starHalf")
+                        .font(.system(size: 16))
+                } else {
+                    Image("star")
+                        .font(.system(size: 16))
+                }
             }
         }
     }
-}
-
-#Preview {
-    RatingView(rating: 3)
 }

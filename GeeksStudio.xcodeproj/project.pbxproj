@@ -79,7 +79,6 @@
 		CE670A892C81BE2000B47F81 = {
 			isa = PBXGroup;
 			children = (
-				CE8229DF2C87367C00CD88DC /* CartProduct+CoreDataClass.swift */,
 				CE670A942C81BE2000B47F81 /* GeeksStudio */,
 				CE670A932C81BE2000B47F81 /* Products */,
 			);
@@ -125,6 +124,7 @@
 				CE8229DC2C87365100CD88DC /* ProductEntity+CoreDataProperties.swift */,
 				CE8229DB2C87365100CD88DC /* ProductEntity+CoreDataClass.swift */,
 				CE8229E02C87367C00CD88DC /* CartProduct+CoreDataProperties.swift */,
+				CE8229DF2C87367C00CD88DC /* CartProduct+CoreDataClass.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";

@@ -22,6 +22,7 @@ extension CartProduct {
     @NSManaged public var price: Float
     @NSManaged public var image: String
     @NSManaged public var id: Int64
+    @NSManaged public var rating: RatingEntity
 
 }
 

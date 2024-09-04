@@ -22,7 +22,7 @@ extension ProductEntity {
     @NSManaged public var desc: String
     @NSManaged public var category: String
     @NSManaged public var id: Int64
-
+    @NSManaged public var rating: RatingEntity
 }
 
 extension ProductEntity : Identifiable {

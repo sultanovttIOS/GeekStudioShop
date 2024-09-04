@@ -14,11 +14,12 @@ struct Product: Decodable, Identifiable {
     let description: String
     let category: String
     let image: String
-//    let rating: Rating
+    let rating: Rating
     
+    struct Rating: Decodable {
+        let rate: Float
+        let count: Int
+    }
 }
 
-struct Rating: Decodable {
-    let rate: Float
-    let count: Int
-}
+

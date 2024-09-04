@@ -101,7 +101,12 @@ class ViewModel: ObservableObject {
                 newProduct.desc = product.description
                 newProduct.category = product.category
                 newProduct.image = product.image
-
+                
+                let rating = RatingEntity(context: viewContext)
+                rating.rate = product.rating.rate
+                rating.count = Int64(product.rating.count)
+                newProduct.rating = rating
+                
                 try viewContext.save()
                 print("Successfully saved product")
             } catch {
@@ -118,13 +123,18 @@ class ViewModel: ObservableObject {
         do {
             let savedProducts = try viewContext.fetch(request)
             self.products = savedProducts.map { cdProduct in
-                Product(
+                let rating: Product.Rating
+                rating = Product.Rating(
+                    rate: cdProduct.rating.rate,
+                    count: Int(cdProduct.rating.count))
+                return Product(
                     id: Int(cdProduct.id),
                     title: cdProduct.title,
                     price: cdProduct.price,
                     description: cdProduct.desc,
                     category: cdProduct.category,
-                    image: cdProduct.image
+                    image: cdProduct.image,
+                    rating: rating
                 )
             }
         } catch {
@@ -148,6 +158,12 @@ class ViewModel: ObservableObject {
             cartProduct.desc = product.description
             cartProduct.category = product.category
             cartProduct.image = product.image
+            
+            let ratingEntity = RatingEntity(context: viewContext)
+            ratingEntity.rate = product.rating.rate
+            ratingEntity.count = Int64(product.rating.count)
+            
+            cartProduct.rating = ratingEntity
             print("Saved product in cart")
             try viewContext.save()
         } catch {
@@ -160,13 +176,21 @@ class ViewModel: ObservableObject {
         do {
             let savedCartProducts = try viewContext.fetch(fetchRequest)
             self.productsInCart = savedCartProducts.map { cdProduct in
-                Product(
+                
+                let rating: Product.Rating
+                rating = Product.Rating(
+                    rate: cdProduct.rating.rate,
+                    count: Int(cdProduct.rating.count)
+                )
+                
+                return Product(
                     id: Int(cdProduct.id),
                     title: cdProduct.title,
                     price: cdProduct.price,
                     description: cdProduct.desc,
                     category: cdProduct.category,
-                    image: cdProduct.image
+                    image: cdProduct.image,
+                    rating: rating
                 )
             }
         } catch {
@@ -183,7 +207,6 @@ class ViewModel: ObservableObject {
             }
             try viewContext.save()
             print("Cleared cart\(allCartProducts)")
-
         } catch {
             print("Failed to clear cart products: \(error.localizedDescription)")
         }
@@ -217,7 +240,7 @@ class ViewModel: ObservableObject {
     }
     
     private func saveCategoriesToCoreData(_ categories: [String]) {
-        let fetchRequest: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
+        let _: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
         categories.forEach { categoryName in
             let category = CategoryEntity(context: viewContext)
             category.title = categoryName
@@ -229,7 +252,6 @@ class ViewModel: ObservableObject {
             print("Failed to save categories: \(error.localizedDescription)")
         }
     }
-
     func fetchCategoriesFromCoreData() {
         let fetchRequest: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
         do {
@@ -246,13 +268,19 @@ class ViewModel: ObservableObject {
         do {
             let savedProducts = try viewContext.fetch(request)
             return savedProducts.map { cdProduct in
-                Product(
+                let rating: Product.Rating
+                rating = Product.Rating(
+                    rate: cdProduct.rating.rate,
+                    count: Int(cdProduct.rating.count))
+                
+                return Product(
                     id: Int(cdProduct.id),
                     title: cdProduct.title,
                     price: cdProduct.price,
                     description: cdProduct.desc,
                     category: cdProduct.category,
-                    image: cdProduct.image
+                    image: cdProduct.image,
+                    rating: rating
                 )
             }
         } catch {
@@ -266,13 +294,19 @@ class ViewModel: ObservableObject {
         do {
             let savedProducts = try viewContext.fetch(request)
             return savedProducts.map { cdProduct in
-                Product(
+                let rating: Product.Rating
+                rating = Product.Rating(
+                    rate: cdProduct.rating.rate,
+                    count: Int(cdProduct.rating.count))
+                
+                return Product(
                     id: Int(cdProduct.id),
                     title: cdProduct.title,
                     price: cdProduct.price,
                     description: cdProduct.desc,
                     category: cdProduct.category,
-                    image: cdProduct.image
+                    image: cdProduct.image,
+                    rating: rating
                 )
             }
         } catch {
@@ -280,5 +314,5 @@ class ViewModel: ObservableObject {
             return []
         }
     }
-
+    
 }
