@@ -10,91 +10,126 @@ import CoreData
 
 let screen = UIScreen.main.bounds
 
+import SwiftUI
+
 struct ProductsView: View {
     
     @StateObject private var viewModel = ViewModel()
-    let layoutForLeft = [GridItem(.adaptive(minimum: screen.width / 2.4))]
+    let layoutForItem = [GridItem(.adaptive(minimum: screen.width / 2.4),
+                                  spacing: 16,
+                                  alignment: .topLeading)]
     @State private var showingBottomSheet = false
     @State var selectedProduct: Product?
     @State private var isCategoryMenu = false
     @State private var selectedCategory: String?
-    
+    @State private var scrollOffset: CGFloat = 0
+    @State private var isScrolling: Bool = false
+    @State private var scale: CGFloat = 1
     
     var body: some View {
         NavigationStack {
             ZStack {
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVGrid(columns: layoutForLeft, spacing: 16) {
-                        ForEach(viewModel.products, id: \.id) { product in
-                            ProductCell(product: product) {
-                                if isCategoryMenu {
-                                    isCategoryMenu = false
-                                } else {
-                                    self.selectedProduct = product
-                                    showingBottomSheet.toggle()
+                ScrollViewReader { scrollViewProxy in
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("Products")
+                                        .font(.system(size: 32, weight: .semibold))
+                                        .foregroundStyle(.myBlack)
+                                        .opacity(isScrolling ? 0 : 1)                        
+                                        .animation(.easeInOut(duration: 0.3), value: !isScrolling)
+                                    
+                                    Text("\(selectedCategory ?? "All")")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundStyle(.myBlack)
+                                        .opacity(isScrolling ? 0 : 1)
+                                        .animation(.easeInOut(duration: 0.3), value: !isScrolling)
+                                }
+                                .padding(.leading)
+                                Spacer()
+                                    .transition(.opacity)
+                            }
+                            
+                            LazyVGrid(columns: layoutForItem, spacing: 16) {
+                                ForEach(viewModel.products, id: \.id) { product in
+                                    ProductCell(product: product) {
+                                        if isCategoryMenu {
+                                            isCategoryMenu = false
+                                        } else {
+                                            self.selectedProduct = product
+                                            showingBottomSheet.toggle()
+                                        }
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 16)
                         }
-                        .frame(maxHeight: 300)
+                        .background(GeometryReader { geo in
+                            Color.clear
+                                .onChange(of: geo.frame(in: .global).minY) { newValue in
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        scrollOffset = -newValue
+                                        isScrolling = newValue < 45
+                                    }
+                                }
+                        })
                     }
-                    .padding(.horizontal)
-                }
-                .onAppear {
-                    viewModel.fetchProductsFromCoreData()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color("myGrayLight"))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        VStack {
-                            Text("Products")
-                                .font(.headline)
-                                .foregroundColor(.myBlack)
-                            Text(selectedCategory ?? "All")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                    .onAppear {
+                        viewModel.fetchProductsFromCoreData()
+                        viewModel.fetchCategoriesFromCoreData()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color("myGrayLight"))
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            VStack {
+                                Text("Products")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(.black)
+                                    .opacity(isScrolling ? 1 : 0)
+                                    .animation(.easeInOut(duration: 0.3), value: isScrolling)
+                                
+                                Text(selectedCategory ?? "All")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    .opacity(isScrolling ? 1 : 0)
+                                    .animation(.easeInOut(duration: 0.3), value: isScrolling)
+                            }
+                            .transition(.opacity)
                         }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            viewModel.isShowCart.toggle()
-                        }) {
-                            Image("cart")
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            
-                            isCategoryMenu.toggle()
-                        }) {
-                            Image(.category)
-                        }
-                    }
-                }
-                .sheet(item: $selectedProduct) { selectedProduct in
-                    DetailsView(viewModel: viewModel, product: selectedProduct)
-                }
-                
-                .navigationDestination(isPresented: $viewModel.isShowCart,
-                                       destination: {
-                    CartView(viewModel: viewModel)
-                })
-                .onAppear() {
-                    viewModel.fetchProductsFromCoreData()
-                    viewModel.fetchCategoriesFromCoreData()
-                }
-                
-                if isCategoryMenu {
-                    CategoryMenu(viewModel: viewModel) { category in
-                        selectedCategory = category
                         
-                        isCategoryMenu = false
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: {
+                                viewModel.isShowCart.toggle()
+                            }) {
+                                Image("cart")
+                            }
+                        }
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(action: {
+                                isCategoryMenu.toggle()
+                            }) {
+                                Image(.category)
+                            }
+                        }
                     }
-                    .zIndex(1)
+                    .sheet(item: $selectedProduct) { selectedProduct in
+                        DetailsView(viewModel: viewModel, product: selectedProduct)
+                    }
+                    .navigationDestination(isPresented: $viewModel.isShowCart) {
+                        CartView(viewModel: viewModel)
+                    }
+                    
+                    if isCategoryMenu {
+                        CategoryMenu(viewModel: viewModel) { category in
+                            selectedCategory = category
+                            isCategoryMenu = false
+                        }
+                        .zIndex(1)
+                    }
                 }
             }
         }
     }
 }
-

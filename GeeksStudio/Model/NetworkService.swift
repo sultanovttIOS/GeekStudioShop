@@ -103,9 +103,10 @@ final class NetworkService {
         ]
         
         return try await withCheckedThrowingContinuation { continuation in
-            AF.request(url, method: .get, headers: headers)
+            AF.request(url, method: .get, headers: headers)       
                 .validate(statusCode: 200..<300)
                 .responseDecodable(of: [String].self, decoder: decoder) { response in
+                    debugPrint(response)
                     switch response.result {
                     case .success(let categories):
                         continuation.resume(returning: categories)

@@ -14,22 +14,37 @@ struct ProductCell: View {
     var body: some View {
         
         VStack {
-            AsyncImage(url: URL(string: product.image)) { image in
-                image
-                    .image?.resizable()
-                    .padding()
-            }
-            HStack {
+            AsyncImage(url: URL(string: product.image)) { phase in
+                switch phase {
+                       case .empty:
+                           ProgressView()
+                               .frame(width: 140.5, height: 276.05)
+                       case .success(let image):
+                           image
+                               .resizable()
+                               .scaledToFit()
+                               .padding(.vertical)
+                       case .failure:
+                           Image(systemName: "photo")
+                               .resizable()
+                               .scaledToFit()
+                               .frame(maxWidth: 140.5, maxHeight: 276.05)
+                               .foregroundColor(.gray)
+                       @unknown default:
+                           EmptyView()
+                       }
+                   }
+            HStack(spacing: 16) {
                 Text(product.title)
                     .font(.system(size: 12, weight: .regular))
-                Spacer()
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+
                 Text(formatPrice(product.price))
                     .font(.system(size: 14, weight: .regular))
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 16)
         }
-        
+        .padding()
         .background(.white)
         .cornerRadius(16)
         .onTapGesture {
