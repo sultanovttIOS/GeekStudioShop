@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CE26DE6C2C898D1700EA82B7 /* NavTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE26DE6B2C898D1700EA82B7 /* NavTitle.swift */; };
 		CE670A962C81BE2000B47F81 /* GeeksStudioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE670A952C81BE2000B47F81 /* GeeksStudioApp.swift */; };
 		CE670A9A2C81BE2200B47F81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE670A992C81BE2200B47F81 /* Assets.xcassets */; };
 		CE670A9D2C81BE2200B47F81 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE670A9C2C81BE2200B47F81 /* Preview Assets.xcassets */; };
@@ -37,7 +36,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		CE26DE6B2C898D1700EA82B7 /* NavTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavTitle.swift; sourceTree = "<group>"; };
 		CE670A922C81BE2000B47F81 /* GeeksStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeeksStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE670A952C81BE2000B47F81 /* GeeksStudioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeeksStudioApp.swift; sourceTree = "<group>"; };
 		CE670A992C81BE2200B47F81 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -156,7 +154,6 @@
 			children = (
 				CE8229D52C872C1F00CD88DC /* SplashScreenView.swift */,
 				CE8D5DF62C81C7A900ED2B9B /* ProductsView.swift */,
-				CE26DE6B2C898D1700EA82B7 /* NavTitle.swift */,
 				CE8D5DFF2C81EA6800ED2B9B /* DetailsView.swift */,
 				CE8D5E102C8598B800ED2B9B /* CategoryMenu.swift */,
 				CE8D5E052C831FB800ED2B9B /* CartView.swift */,
@@ -262,7 +259,6 @@
 			files = (
 				CE8D5E0A2C856D4300ED2B9B /* ProductInCartCell.swift in Sources */,
 				CE8D5DFB2C81CA9400ED2B9B /* ViewModel.swift in Sources */,
-				CE26DE6C2C898D1700EA82B7 /* NavTitle.swift in Sources */,
 				CE8229E12C87367C00CD88DC /* CartProduct+CoreDataClass.swift in Sources */,
 				CE8229E22C87367C00CD88DC /* CartProduct+CoreDataProperties.swift in Sources */,
 				CE8D5E002C81EA6800ED2B9B /* DetailsView.swift in Sources */,
