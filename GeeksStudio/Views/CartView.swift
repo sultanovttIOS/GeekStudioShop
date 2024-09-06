@@ -13,6 +13,8 @@ struct CartView: View {
     @State var cartIsEmpty = false
     @Environment(\.dismiss) var dismiss
     @State var buyIsActive = false
+    @State private var scrollOffset: CGFloat = 0
+    @State private var isScrolling: Bool = false
     
     var body: some View {
         VStack {
@@ -26,14 +28,36 @@ struct CartView: View {
                     }
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
-                    LazyVGrid(columns: layoutForCart, spacing: 16) {
-                        ForEach(viewModel.productsInCart, id: \.id) { item in
-                            ProductInCartCell(product: item, viewModel: viewModel)
-                            
+                    VStack {
+                        HStack {
+                            Text("Cart")
+                                .font(.system(size: 32, weight: .semibold))
+                                .foregroundStyle(.myBlack)
+                                .opacity(isScrolling ? 0 : 1)
+                                .animation(.easeInOut(duration: 0.3), value: !isScrolling)
+                                .padding(.leading)
+                            Spacer()
+                                .transition(.opacity)
                         }
-                        .frame(maxHeight: 300)
+                        LazyVGrid(columns: layoutForCart, spacing: 16) {
+                            ForEach(viewModel.productsInCart, id: \.id) { item in
+                                ProductInCartCell(product: item, viewModel: viewModel)
+                                
+                            }
+                            .frame(maxHeight: 300)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
                     }
-                    .padding(.horizontal)
+                    .background(GeometryReader { geo in
+                        Color.clear
+                            .onChange(of: geo.frame(in: .global).minY) { newValue in
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    scrollOffset = -newValue
+                                    isScrolling = newValue < 46
+                                }
+                            }
+                    })
                 }
                 .onAppear {
                     cartIsEmpty = false
@@ -70,7 +94,6 @@ struct CartView: View {
                         .shadow(radius: 4)
                 )
                 .padding(.bottom)
-
             }
             .padding(.horizontal)
             .alert(isPresented: $buyIsActive) {
@@ -83,11 +106,18 @@ struct CartView: View {
                     }
                 )
             }
-            .navigationTitle("Cart")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    VStack {
+                        Text("Cart")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                            .opacity(isScrolling ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.3), value: isScrolling)
+                    }
+                    .transition(.opacity)
+                }
+            }
         }
     }
-}
-
-#Preview {
-    CartView(viewModel: ViewModel())
 }

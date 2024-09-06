@@ -83,7 +83,7 @@ struct ProductsView: View {
                             isCategoryMenu = false
                         }
                     }
-                    .position(x: 140, y: 140)
+                    .position(x: 140, y: 145.5)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -127,6 +127,7 @@ struct ProductsView: View {
             .navigationDestination(isPresented: $viewModel.isShowCart) {
                 CartView(viewModel: viewModel)
             }
+            .toolbarBackground(.myGrayLight)
         }
     }
 }
