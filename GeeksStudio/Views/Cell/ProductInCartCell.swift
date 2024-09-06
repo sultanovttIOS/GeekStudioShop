@@ -14,12 +14,27 @@ struct ProductInCartCell: View {
     var body: some View {
         HStack(spacing: 16) {
             AsyncImage(url: URL(string: product.image)) { image in
-                image
-                    .image?.resizable()
-                    .padding()
-                    .scaledToFill()
-                    .frame(maxWidth: 148, maxHeight: 276)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                switch image {
+                case .empty:
+                    ProgressView()
+                        .frame(width: 140.5, height: 276.05)
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.vertical)
+                        .frame(maxWidth: 148, maxHeight: 276)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                case .failure(let error):
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.vertical)
+                        .frame(maxWidth: 148, maxHeight: 276)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                @unknown default:
+                    EmptyView()
+                }
             }
             Divider()
                 .foregroundColor(Color("myGrayAverage"))
