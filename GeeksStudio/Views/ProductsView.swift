@@ -3,14 +3,11 @@
 //  GeeksStudio
 //
 //  Created by Alisher Sultanov on 30/8/24.
-//
 
 import SwiftUI
 import CoreData
 
 let screen = UIScreen.main.bounds
-
-import SwiftUI
 
 struct ProductsView: View {
     
@@ -48,6 +45,7 @@ struct ProductsView: View {
                             Spacer()
                                 .transition(.opacity)
                         }
+                        
                         LazyVGrid(columns: layoutForItem, spacing: 16) {
                             ForEach(viewModel.products, id: \.id) { product in
                                 ProductCell(product: product) {
@@ -78,6 +76,15 @@ struct ProductsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("myGrayLight"))
+                if isCategoryMenu {
+                    VStack(alignment: .leading, spacing: 0) {
+                        CategoryMenu(viewModel: viewModel) { category in
+                            selectedCategory = category
+                            isCategoryMenu = false
+                        }
+                    }
+                    .position(x: 140, y: 140)
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -102,9 +109,10 @@ struct ProductsView: View {
                     Button(action: {
                         viewModel.isShowCart.toggle()
                     }) {
-                        Image("cart")
+                        Image(.cart)
                     }
                 }
+                
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         isCategoryMenu.toggle()
@@ -118,14 +126,6 @@ struct ProductsView: View {
             }
             .navigationDestination(isPresented: $viewModel.isShowCart) {
                 CartView(viewModel: viewModel)
-            }
-            
-            if isCategoryMenu {
-                CategoryMenu(viewModel: viewModel) { category in
-                    selectedCategory = category
-                    isCategoryMenu = false
-                }
-                .zIndex(1)
             }
         }
     }
