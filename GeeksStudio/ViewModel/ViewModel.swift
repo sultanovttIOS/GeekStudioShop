@@ -41,7 +41,6 @@ class ViewModel: ObservableObject {
                 limit: limit
             )
             DispatchQueue.main.async {
-                self.products = products
                 self.saveProductsToCoreData(products)
             }
         } catch {
@@ -60,7 +59,6 @@ class ViewModel: ObservableObject {
                     uniqueCategories.insert("All", at: 0)
                 }
                 DispatchQueue.main.async {
-                    self.categories = categories
                     self.saveCategoriesToCoreData(categories)
                 }
             } catch {
