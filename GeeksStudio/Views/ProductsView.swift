@@ -77,15 +77,14 @@ struct ProductsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color("myGrayLight"))
                 if isCategoryMenu {
-                    VStack(alignment: .leading, spacing: 0) {
-                        CategoryMenu(viewModel: viewModel) { category in
-                            selectedCategory = category
-                            isCategoryMenu = false
-                        }
+                    CategoryMenu(viewModel: viewModel) { category in
+                        selectedCategory = category
+                        isCategoryMenu = false
                     }
                     .position(x: 140, y: 145.5)
                 }
             }
+            
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {

@@ -62,7 +62,6 @@ class ViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.categories = categories
                     self.saveCategoriesToCoreData(categories)
-                    print(categories)
                 }
             } catch {
                 print(error.localizedDescription)
@@ -116,7 +115,6 @@ class ViewModel: ObservableObject {
                 print("Successfully saved product")
             } catch {
                 print("Failed to save product: \(error.localizedDescription)")
-                print("Error details: \(error)")
             }
         }
     }
@@ -260,7 +258,6 @@ class ViewModel: ObservableObject {
             }
             
             try viewContext.save()
-            print("Saved categories: \(categories)")
         } catch {
             print("Failed to save categories: \(error.localizedDescription)")
         }

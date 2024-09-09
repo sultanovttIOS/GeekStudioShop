@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct DetailsView: View {
     @State private var isAddToCart = true
@@ -16,12 +17,10 @@ struct DetailsView: View {
     var body: some View {
         VStack(alignment: .leading) {
             ScrollView(showsIndicators: false) {
-                AsyncImage(url: URL(string: product.image)) { image in
-                    image
-                        .image?.resizable()
-                        .padding()
-                        .frame(maxHeight: 300)
-                }
+                KFImage(URL(string: product.image))
+                    .resizable()
+                    .padding()
+                    .frame(maxHeight: 300)
                 Divider()
                     .padding(.vertical)
                     .foregroundColor(Color("myGrayAverage"))

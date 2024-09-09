@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ProductCell: View {
     let product: Product
@@ -14,26 +15,10 @@ struct ProductCell: View {
     var body: some View {
         
         VStack {
-            AsyncImage(url: URL(string: product.image)) { phase in
-                switch phase {
-                       case .empty:
-                           ProgressView()
-                               .frame(width: 140.5, height: 276.05)
-                       case .success(let image):
-                           image
-                               .resizable()
-                               .scaledToFit()
-                               .padding(.vertical)
-                       case .failure:
-                           Image(systemName: "photo")
-                               .resizable()
-                               .scaledToFit()
-                               .frame(maxWidth: 140.5, maxHeight: 276.05)
-                               .foregroundColor(.gray)
-                       @unknown default:
-                           EmptyView()
-                       }
-                   }
+            KFImage(URL(string: product.image))
+                .resizable()
+                .scaledToFit()
+                .padding(.vertical)
             HStack(spacing: 16) {
                 Text(product.title)
                     .font(.system(size: 12, weight: .regular))

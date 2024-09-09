@@ -13,26 +13,26 @@ struct SplashScreenView: View {
     @State private var isLoading = true
     
     var body: some View {
-//        Group {
-//            if isLoading {
-//                VStack {
-//                    ProgressView()
-//                        .progressViewStyle(CircularProgressViewStyle())
-//                        .scaleEffect(2)
-//                        .padding()
-//                }
-//                .onAppear {
-//                    Task {
-//                        defer {
-//                            isLoading = false
-//                        }
-//                        try await viewModel.fetchProducts()
-//                        try await viewModel.fetchCategories()
-//                    }
-//                }
-//            } else {
+        Group {
+            if isLoading {
+                VStack {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(2)
+                        .padding()
+                }
+                .onAppear {
+                    Task {
+                        defer {
+                            isLoading = false
+                        }
+                        try await viewModel.fetchProducts()
+                        try await viewModel.fetchCategories()
+                    }
+                }
+            } else {
                 ProductsView()
-//            }
-//        }
+            }
+        }
     }
 }
