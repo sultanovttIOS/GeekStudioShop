@@ -31,7 +31,7 @@ struct CategoryMenu: View {
             
             List(viewModel.categories, id: \.self) { category in
                 HStack {
-                    Text(category)
+                    Text(category.capitalized)
                         .padding(.horizontal)
                         .frame(alignment: .leading)
                     Spacer()

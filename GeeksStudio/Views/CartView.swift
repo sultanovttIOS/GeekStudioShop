@@ -54,7 +54,7 @@ struct CartView: View {
                             .onChange(of: geo.frame(in: .global).minY) { newValue in
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     scrollOffset = -newValue
-                                    isScrolling = newValue < 46
+                                    isScrolling = newValue < 66
                                 }
                             }
                     })
