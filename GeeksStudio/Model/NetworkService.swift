@@ -32,7 +32,6 @@ final class NetworkService {
     }()
     
     let logger = Logger(subsystem: "com.alish", category: "Products")
-    
     private let baseURL = "https://fakestoreapi.com/"
 
     // MARK: Get All Products

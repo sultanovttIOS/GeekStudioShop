@@ -49,6 +49,7 @@ class ViewModel: ObservableObject {
     }
     
     // MARK: - Fetch Categories
+    
     func fetchCategories() async throws {
         Task {
             do {

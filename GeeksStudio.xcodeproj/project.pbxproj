@@ -76,6 +76,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE395FB72C9C534B00E55D47 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				CE8D5E102C8598B800ED2B9B /* CategoryMenu.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		CE670A892C81BE2000B47F81 = {
 			isa = PBXGroup;
 			children = (
@@ -101,7 +109,6 @@
 				CE8D5DF52C81C75D00ED2B9B /* ViewModel */,
 				CE670A992C81BE2200B47F81 /* Assets.xcassets */,
 				CE8229CB2C870D2D00CD88DC /* MyDataModel.xcdatamodeld */,
-				CE8229CE2C870DA800CD88DC /* PersistenceController.swift */,
 				CE670A9B2C81BE2200B47F81 /* Preview Content */,
 			);
 			path = GeeksStudio;
@@ -118,6 +125,7 @@
 		CE8229E32C8737E700CD88DC /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				CE8229CE2C870DA800CD88DC /* PersistenceController.swift */,
 				CE8229D82C87350200CD88DC /* CategoryEntity+CoreDataProperties.swift */,
 				CE8229D72C87350200CD88DC /* CategoryEntity+CoreDataClass.swift */,
 				CE8229DC2C87365100CD88DC /* ProductEntity+CoreDataProperties.swift */,
@@ -154,8 +162,8 @@
 				CE8229D52C872C1F00CD88DC /* SplashScreenView.swift */,
 				CE8D5DF62C81C7A900ED2B9B /* ProductsView.swift */,
 				CE8D5DFF2C81EA6800ED2B9B /* DetailsView.swift */,
-				CE8D5E102C8598B800ED2B9B /* CategoryMenu.swift */,
 				CE8D5E052C831FB800ED2B9B /* CartView.swift */,
+				CE395FB72C9C534B00E55D47 /* Components */,
 				CE8D5DFE2C81D25D00ED2B9B /* Cell */,
 			);
 			path = Views;
