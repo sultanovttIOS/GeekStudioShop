@@ -53,7 +53,6 @@ struct ProductsView: View {
                                         isCategoryMenu = false
                                     } else {
                                         self.selectedProduct = product
-                                        showingBottomSheet.toggle()
                                     }
                                 }
                             }

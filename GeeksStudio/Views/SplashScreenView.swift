@@ -10,28 +10,32 @@ import SwiftUI
 struct SplashScreenView: View {
     
     @StateObject private var viewModel = ViewModel()
-    @State private var isLoading = true
+    @State private var isActive = false
     
     var body: some View {
-        Group {
-            if isLoading {
+        VStack {
+            if isActive {
+                ProductsView()
+            } else {
                 VStack {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(2)
-                        .padding()
+                    Image(.launchScreenLogo)
+                        .resizable()
+                        .frame(width: 225, height: 116)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .onAppear {
                     Task {
                         defer {
-                            isLoading = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                                withAnimation {
+                                    self.isActive = true
+                                }
+                            }
                         }
                         try await viewModel.fetchProducts()
                         try await viewModel.fetchCategories()
                     }
                 }
-            } else {
-                ProductsView()
             }
         }
     }
